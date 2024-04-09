@@ -1,0 +1,9 @@
+modules:
+  webtrigger:
+    - key: example-web-trigger-key
+      function: web-trigger-function
+  function:
+    - key: web-trigger-function
+      handler: index.runWebTrigger
+app:
+  id: ari:cloud:ecosystem::app/6530fe7f-f5ec-479b-b21f-eaebc373d028
