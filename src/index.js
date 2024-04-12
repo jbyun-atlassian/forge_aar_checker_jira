@@ -1,37 +1,59 @@
 import api, { route, asApp, asUser } from "@forge/api";
 
-exports.runWebTrigger = async () => {
-  const allowedProjectKey = "AARAllowed";
-  const res = await asApp().requestJira(
-    route`/rest/api/3/project/${allowedProjectKey}`
-  );
-  const data = await res.json();
-  console.log(`result AARAllowed: ${JSON.stringify(data)}`);
+exports.runWebTrigger = async (request) => {
+  try {
+    const reqBody = JSON.parse(request.body);
+    const issue_list = reqBody.issue_list;
+    if (!issue_list) {
+      throw new Error("issue_list property is missing in the request body.");
+    }
 
-  const blockedProjectKey = "AARBlocked";
-  const res1 = await asApp().requestConfluence(
-    route`/rest/api/3/project/${blockedProjectKey}`
-  );
-  const data1 = await res1.json();
-  console.log(`result AARBlocked: ${JSON.stringify(data1)}`);
+    if (!Array.isArray(issue_list)) {
+      throw new Error("issue_list property must be array in the request body.");
+    }
 
-  let results = [];
-  results.push({
-    message: `result AARAllowed`,
-    result: data,
-  });
-  results.push({
-    message: `result AARBlocked`,
-    result: data1,
-  });
+    let results = [];
+    for (var i=0; i < issue_list.length; i++) {
+      const issue = issue_list[i];
+      try {
+        const res = await asApp().requestJira(
+          route`/rest/api/3/issue/${issue}`
+        );
+  
+        const data = await res.json();
+        results.push({
+          message: `result of ${issue}`,
+          result: data,
+        });
+      } catch (err) {
+        results.push({
+          message: `result of ${issue}`,
+          result: `(error) ${err.message}`,
+        });
+      }
+    }
 
-  return {
-    body: JSON.stringify(results),
-    headers: {
-      "Content-Type": ["application/json"],
-      // 'X-Request-Id': [`rnd-${rnd}`]
-    },
-    statusCode: 200,
-    statusText: "Triggered",
-  };
+    return {
+      body: JSON.stringify(results),
+      headers: {
+        "Content-Type": ["application/json"],
+        // 'X-Request-Id': [`rnd-${rnd}`]
+      },
+      statusCode: 200,
+      statusText: "Triggered",
+    };
+  } catch (e) {
+    console.error(e);
+    return {
+      body: JSON.stringify({
+        message: `make sure you gotta pass "issue_list" (i.e { "issue_list": ["issueA", "issueB"] }) in a request body. ${e}`,
+      }),
+      headers: {
+        "Content-Type": ["application/json"],
+        // 'X-Request-Id': [`rnd-${rnd}`]
+      },
+      statusCode: 409,
+      statusText: "Triggered",
+    };
+  }
 };
