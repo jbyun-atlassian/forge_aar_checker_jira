@@ -8,6 +8,9 @@ App installaion
 Playing with Webtrigger to simulate Forge request to the Product (Jira)
 - `forge webtrigger`
 - ping the url returned (there is no auth)
+- pass issue list as body ({
+    "issue_list": ["AARALLOWED-1", "AARBLOCKED-1"]
+})
 
 Note;
 - Forge request to the product on this Webtrigger sample is using the `issue` level api, Not project level api.
