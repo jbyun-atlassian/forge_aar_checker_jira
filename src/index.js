@@ -136,6 +136,7 @@ exports.runWebTriggerForEmail = async (request) => {
     if (product === 'jira') {
       for (var i = 0; i < accountid_list.length; i++) {
         const accountid = accountid_list[i];
+
         try {
           const res = await asApp().requestJira(
             route`/rest/api/3/user/email?accountId=${accountid}`
@@ -147,18 +148,26 @@ exports.runWebTriggerForEmail = async (request) => {
             result: data,
           });
   
-          const res3 = await asUser().requestJira(
+        } catch (err) {
+          results.push({
+            message: `result of ${accountid} email`,
+            result: `(error) ${err.message}`,
+          });
+        }
+
+        try {
+          const res = await asUser().requestJira(
             route`/rest/api/3/user/email?accountId=${accountid}`
           );
   
-          const data3 = await res3.text();
+          const data = await res.text();
           results.push({
             message: `result of ${accountid} email (asUser)`,
-            result: data3,
+            result: data,
           });
         } catch (err) {
           results.push({
-            message: `result of ${accountid}`,
+            message: `result of ${accountid} email (asUser)`,
             result: `(error) ${err.message}`,
           });
         }
@@ -177,7 +186,7 @@ exports.runWebTriggerForEmail = async (request) => {
           result: data2,
         });
   
-        // console.log(`/rest/api/3/user/email/bulk?${accountIds_queryparams}`);
+        // console.log(`/rest/api/3/user/email/bulk?${accountIds_queryparams}`); NO IDEA WHY THIS NOT WORKING
         console.log('>>>2', `/rest/api/3/user/email/bulk?accountId=${accountid_list[0]}&accountId=${accountid_list[1]}`);
         const res100 = await asApp().requestJira(
           route`/rest/api/3/user/email/bulk?accountId=${accountid_list[0]}&accountId=${accountid_list[1]}`
@@ -197,14 +206,14 @@ exports.runWebTriggerForEmail = async (request) => {
       
   
       try {
-        const res4 = await asUser().requestJira(
+        const res = await asUser().requestJira(
           route`/rest/api/3/user/email/bulk?${accountIds_queryparams}`
         );
     
-        const data4 = await res4.text();
+        const data = await res.text();
         results.push({
           message: `result of ${accountid_list.toString()} email/bulk (asUser)`,
-          result: data4,
+          result: data,
         });
       } catch (err) {
         results.push({
@@ -226,19 +235,26 @@ exports.runWebTriggerForEmail = async (request) => {
             message: `result of ${accountid} email`,
             result: data,
           });
-  
-          const res3 = await asUser().requestConfluence(
+        } catch (err) {
+          results.push({
+            message: `result of ${accountid} email`,
+            result: `(error) ${err.message}`,
+          });
+        }
+
+        try {
+          const res = await asUser().requestConfluence(
             route`/wiki/rest/api/3/user/email?accountId=${accountid}`
           );
   
-          const data3 = await res3.text();
+          const data = await res.text();
           results.push({
             message: `result of ${accountid} email (asUser)`,
-            result: data3,
+            result: data,
           });
         } catch (err) {
           results.push({
-            message: `result of ${accountid}`,
+            message: `result of ${accountid} email (asUser)`,
             result: `(error) ${err.message}`,
           });
         }
