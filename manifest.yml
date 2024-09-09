@@ -23,6 +23,14 @@ modules:
         function: resolver
       render: native
       title: Forge email checker
+  confluence:globalPage:
+    - key: forge-hello-world-global-page-conf
+      resource: main
+      render: native
+      resolver:
+        function: resolver
+      title: Forge email checker
+      route: forge-email-checker
   webtrigger:
     - key: example-web-trigger-key
       function: web-trigger-function
