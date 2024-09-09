@@ -1,33 +1,64 @@
+# connectModules:
+#   "jira:lifecycle":
+#     [
+#       { "key": "connect-lifecycle", "installed": "/installed" }
+#     ]
+#   "jira:webPanels":
+#     [
+#       {
+#           "key": "issue-context",
+#           "location": "atl.jira.view.issue.right.context",
+#           "url": "/onecloud-forever?issue_key={issue.key}&issue_id={issue.id}&project_key\
+#             ={project.key}&project_id={project.id}&issuetype_id={issuetype.id}",
+#           "params": {},
+#           "name": { "value": "JB h11n issue-context" },
+#           "conditions": [ { "condition": "user_is_logged_in" } ]
+#         }
+#     ]
 modules:
-  jira:customField:
-    - key: cf-type-money
-      name: Development cost
-      description: Tracks the development cost of features, in different currencies
-      type: object
-      formatter:
-        expression: "`${value.amount} ${value.currency}`"
-      schema:
-        properties:
-          amount:
-            type: number
-            searchAlias: Amount
-          currency:
-            type: string
-            enum: ["USD", "EURO", "AUD"]
-            searchAlias: Currency
-          spender:
-            type: string
-            searchType: user
-            searchAlias: Spender
-        required: ["amount", "currency"]
+  jira:globalPage:
+    - key: forge-hello-world-global-page
+      resource: main
+      resolver:
+        function: resolver
+      render: native
+      title: Forge email checker
   webtrigger:
     - key: example-web-trigger-key
       function: web-trigger-function
+    - key: web-trigger-for-user
+      function: web-trigger-user
+    - key: web-trigger-for-email
+      function: web-trigger-email
   function:
+    - key: resolver
+      handler: index.handler
     - key: web-trigger-function
       handler: index.runWebTrigger
+    - key: web-trigger-user
+      handler: index.runWebTriggerForUser
+    - key: web-trigger-email
+      handler: index.runWebTriggerForEmail
+resources:
+  - key: main
+    path: src/frontend/index.jsx
 permissions:
   scopes:
+    - read:jira-user
     - read:jira-work
+    - read:connect-jira
+    - write:connect-jira
+    - read:email-address:jira
+    # - act-as-user:connect-jira
+# remotes:
+#   - key: connect
+#     baseUrl: https://b01c-114-73-142-149.ngrok-free.app
 app:
-  id: ari:cloud:ecosystem::app/20341273-f536-408b-85d6-cec577829f32
+  id: ari:cloud:ecosystem::app/3393830b-48a4-4dac-ad47-901ab69c03dc #prod for pure jira
+  # id: ari:cloud:ecosystem::app/13112095-b151-4f39-aa88-40c367b46597 #prod for h11n
+  # id: ari:cloud:ecosystem::app/20341273-f536-408b-85d6-cec577829f32 #staging for h11n
+  # connect:
+  #   key: jb-sample-030924
+  #   remote: connect
+  runtime:
+    name: nodejs18.x

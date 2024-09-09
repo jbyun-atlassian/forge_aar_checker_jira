@@ -4,11 +4,15 @@
   "description": "Forge Access Policy Checker for Jira projects",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "./node_modules/.bin/eslint src/**/*"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@forge/api": "^3.3.0"
+    "@forge/api": "^3.3.0",
+    "@forge/bridge": "3.5.0",
+    "@forge/react": "10.5.2",
+    "@forge/resolver": "1.5.39",
+    "react": "^18.2.0"
   }
 }
