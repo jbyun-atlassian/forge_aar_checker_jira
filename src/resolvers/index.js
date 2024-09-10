@@ -16,8 +16,12 @@ resolver.define("getText", async (req) => {
       route`/rest/api/3/user/email?accountId=${accountid}`
     );
   } else {
+    // res = await asApp().requestConfluence(
+    //   route`/wiki/rest/api/user/email?accountId=${accountid}`
+    // );
+
     res = await asApp().requestConfluence(
-      route`/wiki/rest/api/3/user/email?accountId=${accountid}`
+      route`/rest/api/user/email?accountId=${accountid}`
     );
   }
 
@@ -42,7 +46,7 @@ resolver.define("getText2", async (req) => {
       );
     } else {
       res = await asUser().requestConfluence(
-        route`/wiki/rest/api/3/user/email?accountId=${accountid}`
+        route`/rest/api/user/email?accountId=${accountid}`
       );
     }
     data = await res.text();
